@@ -29,7 +29,6 @@ public class Player_Script : MonoBehaviour
 
     void Start()
     {
-        // Resim bileşenini (SpriteRenderer) buluyoruz
         sr = GetComponent<SpriteRenderer>(); 
         if(sr == null) sr = GetComponentInChildren<SpriteRenderer>();
 
@@ -43,25 +42,20 @@ public class Player_Script : MonoBehaviour
         
         moveInput = Input.GetAxisRaw("Horizontal");
         
-        // --- HAREKET VE DÖNME (Işınlanma Yapmayan Yöntem) ---
         if(moveInput != 0)
         {
             animator.SetBool("runn", true);
-            if(moveInput > 0) // SAĞA GİDERKEN
+            if(moveInput > 0)
             {
-                // 1. Resmi düzelt
                 sr.transform.localScale = new Vector3(1, 1, 1); 
                 
-                // 2. Kılıç noktasını sağa al (Pozitif yap)
                 if(attackPoint != null)
                     attackPoint.localPosition = new Vector3(Mathf.Abs(attackPoint.localPosition.x), attackPoint.localPosition.y, 0);
             }
-            else if(moveInput < 0) // SOLA GİDERKEN
+            else if(moveInput < 0)
             {
-                // 1. Resmi ters çevir
                 sr.transform.localScale = new Vector3(-1, 1, 1);
                 
-                // 2. Kılıç noktasını sola al (Negatif yap)
                 if(attackPoint != null)
                     attackPoint.localPosition = new Vector3(-Mathf.Abs(attackPoint.localPosition.x), attackPoint.localPosition.y, 0);
             }
@@ -71,14 +65,12 @@ public class Player_Script : MonoBehaviour
             animator.SetBool("runn", false);
         }
 
-        // --- ZIPLAMA ---
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rgb.linearVelocity = new Vector2(rgb.linearVelocity.x, jumpForce);
             animator.SetTrigger("jump");
         }
 
-        // --- SALDIRI ---
         if (Input.GetKeyDown(KeyCode.Alpha1)) 
         {
             animator.SetTrigger("attack1");
@@ -95,11 +87,9 @@ public class Player_Script : MonoBehaviour
             Attack();
         }
 
-        // --- DİĞER ---
         if (Input.GetKeyDown(KeyCode.Z)) animator.SetTrigger("roll");
         if (Input.GetKey(KeyCode.LeftShift)) speed = 7f; else speed = 5f;
 
-        // --- ÖLÜM ---
         if (healthBar.isDead && !died)
         {
             died = true;
@@ -115,7 +105,6 @@ public class Player_Script : MonoBehaviour
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, radius, groundLayer);
     }
 
-    // --- HASAR VERME FONKSİYONU (GÜNCELLENDİ) ---
     void Attack()
     {
         if (attackPoint == null) return;
@@ -124,14 +113,12 @@ public class Player_Script : MonoBehaviour
 
         foreach(Collider2D enemy in hitEnemies)
         {
-            // 1. GOBLİN Mİ?
             goblinyapayzeka goblin = enemy.GetComponent<goblinyapayzeka>();
             if(goblin != null)
             {
                 goblin.TakeDamage(attackDamage);
             }
 
-            // 2. İSKELET Mİ? (Yeni Eklenen Kısım)
             skeletonyapayzeka skeleton = enemy.GetComponent<skeletonyapayzeka>();
             if(skeleton != null)
             {
